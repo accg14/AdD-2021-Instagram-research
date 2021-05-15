@@ -7,6 +7,8 @@ import pathlib
 from timeit import default_timer as timer
 import datetime
 
+FOLLOWERS_BATCH = 100
+
 
 
 import urllib3
@@ -80,6 +82,7 @@ for ind in range(len(PROFILE)):
         main_followers = profile.followers
         count = 0
         total=0
+        batch_counter = 0
         # Print list of followees
         for person in profile.get_followers():
             try:
@@ -119,6 +122,11 @@ for ind in range(len(PROFILE)):
                 print('--------------------------------------------------------------------------------\nTotal followers scraped:',total,' out of',main_followers)
                 print('Time:',str(datetime.timedelta(seconds=(timer()-start))))
                 print('Current Account:',ind+1,'\t Remaining Accounts:',len(PROFILE)-ind-1 ,'\nAccount Name:',pro)
+
+                batch_counter += 1
+                if batch_counter == FOLLOWERS_BATCH:
+                    batch_counter = 0
+                    sleep(900)
 
 
             except Exception as e:
