@@ -7,9 +7,7 @@ import pathlib
 from timeit import default_timer as timer
 import datetime
 
-FOLLOWERS_BATCH = 100
-
-
+FOLLOWERS_BATCH = 50
 
 import urllib3
 import instaloader
@@ -72,11 +70,9 @@ for ind in range(len(PROFILE)):
         print('\n\nGetting followers from',pro)
         filename = 'downloads/'+pro+'.csv'
         with open(filename,'a',newline='',encoding="utf-8") as csvf:
-
             csv_writer = csv.writer(csvf)
-            csv_writer.writerow(['user_id','username','fullname','is_verified','is_private','media_count','follower_count','following_count','bio','website','emails','last_activity','scrape_of', 'scraped_at'])
-
-
+            #csv_writer.writerow(['user_id','username','fullname','is_verified','is_private','media_count','follower_count','following_count','bio','website','emails','last_activity','scrape_of', 'scraped_at'])
+            csv_writer.writerow(['user_id','username','fullname','is_verified','is_private','media_count','follower_count','following_count','bio','website','emails','scrape_of', 'scraped_at'])
 
         profile = instaloader.Profile.from_username(L.context, pro)
         main_followers = profile.followers
@@ -84,6 +80,7 @@ for ind in range(len(PROFILE)):
         total=0
         batch_counter = 0
         # Print list of followees
+
         for person in profile.get_followers():
             try:
 #                 wait_for_internet_connection()
@@ -99,23 +96,14 @@ for ind in range(len(PROFILE)):
                 bio = person.biography
                 emails = re.findall(r"[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+", bio)
                 website = person.external_url
-                #last activity
-                try:
-                    follower_profile = instaloader.Profile.from_username(L.context, username)
-                    for post in follower_profile.get_posts():
-                        last_activity = post.date_local
-                        break
-                except Exception as e:
-                    print(e)
-                    last_activity=''
-
 
                 print('Username:',username)
-                print('Last Activity',last_activity)
+                #print('Last Activity',last_activity)
                 with open(filename,'a',newline='') as csvf:
 
                     csv_writer = csv.writer(csvf)
-                    csv_writer.writerow([user_id,username,fullname,is_verified,is_private,media_count,follower_count,following_count,bio,website,emails,last_activity,pro,curr])
+                    #csv_writer.writerow([user_id,username,fullname,is_verified,is_private,media_count,follower_count,following_count,bio,website,emails,last_activity,pro,curr])
+                    csv_writer.writerow([user_id,username,fullname,is_verified,is_private,media_count,follower_count,following_count,bio,website,emails,pro,curr])
                 # os.system('clear')
                 # os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -125,10 +113,9 @@ for ind in range(len(PROFILE)):
 
                 batch_counter += 1
                 if batch_counter == FOLLOWERS_BATCH:
+                    print("pause")
                     batch_counter = 0
-                    sleep(900)
-
-
+                    sleep(180)
             except Exception as e:
                 print(e)
 
